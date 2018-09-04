@@ -30,12 +30,12 @@ public class RecordProcessor {
 		//make not empty line counter function
 		//params:scanner
 		//returns:count
-		int nonEmptyLineCount = 0;
-		while(scanner.hasNextLine()) {
-			String nextLine = scanner.nextLine();
-			if(nextLine.length() > 0)
-				nonEmptyLineCount++;
-		}
+		int nonEmptyLineCount = getLineCount(scanner);
+		//while(scanner.hasNextLine()) {
+		//	String nextLine = scanner.nextLine();
+		//	if(nextLine.length() > 0)
+		//		nonEmptyLineCount++;
+		//}
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		
 		firstNames = new String[nonEmptyLineCount];
@@ -214,6 +214,16 @@ public class RecordProcessor {
 		scanner.close();
 		
 		return outputBuffer.toString();
+	}
+
+	private static int getLineCount(Scanner scanner) {
+		int nonEmptyLineCount = 0;
+		while(scanner.hasNextLine()) {
+			String nextLine = scanner.nextLine();
+			if(nextLine.length() > 0)
+				nonEmptyLineCount++;
+		}
+		return nonEmptyLineCount;
 	}
 	
 }
