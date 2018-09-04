@@ -103,7 +103,7 @@ public class RecordProcessor {
 			return null;
 		}
 		
-		//print the rows
+		//print the header function
 		outputBuffer.append(String.format("# of people imported: %d\n", firstNames.length));
 		
 		outputBuffer.append(String.format("\n%-30s %s  %-12s %12s\n", "Person Name", "Age", "Emp. Type", "Pay"));
@@ -116,7 +116,7 @@ public class RecordProcessor {
 		for(int i = 0; i < 12; i++)
 			outputBuffer.append(String.format("-"));
 		outputBuffer.append(String.format("\n"));
-		
+		//------------------------------------------
 		for(int i = 0; i < firstNames.length; i++) {
 			outputBuffer.append(String.format("%-30s %-3d  %-12s $%12.2f\n", firstNames[i] + " " + lastNames[i], ages[i]
 				, employeeTypes[i], payments[i]));
@@ -134,7 +134,7 @@ public class RecordProcessor {
 		double salarySum = 0;
 		double averageSalary = 0;
 		
-		
+		//not sure how to but needs to be a func
 		for(int i = 0; i < firstNames.length; i++) {
 			ageSum += ages[i];
 			if(employeeTypes[i].equals("Commission")) {
@@ -148,6 +148,7 @@ public class RecordProcessor {
 				numOfSalarys++;
 			}
 		}
+		//------------------------
 		averageAge = (float) ageSum / firstNames.length;
 		outputBuffer.append(String.format("\nAverage age:         %12.1f\n", averageAge));
 		averageComission = commissionSum / numOfComissions;
@@ -159,6 +160,7 @@ public class RecordProcessor {
 		
 		HashMap<String, Integer> sameFirstNames = new HashMap<String, Integer>();
 		//find same first name func
+		//should return same first name hash
 		int sameFirstNameCount = 0;
 		for(int i = 0; i < firstNames.length; i++) {
 			if(sameFirstNames.containsKey(firstNames[i])) {
@@ -180,7 +182,7 @@ public class RecordProcessor {
 		} else { 
 			outputBuffer.append(String.format("All first names are unique"));
 		}
-		//end of first name func
+		//end of first name func---------------------
 		
 		HashMap<String, Integer> sameLastNames = new HashMap<String, Integer>();
 		//maybe generalize same first name func to take in last names too?
