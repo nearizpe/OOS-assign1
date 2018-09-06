@@ -35,7 +35,7 @@ public class RecordProcessor {
 		
 		//function 
 		try{
-			alphabatizeEmployeeDataByLastName(employeeRecords,nonEmptyLineCount);
+			nonEmptyLineCount = alphabatizeEmployeeDataByLastName(employeeRecords,nonEmptyLineCount);
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
 			employeeRecords.close();
@@ -49,6 +49,10 @@ public class RecordProcessor {
 		}
 		
 		//print the header function
+		System.out.print("~~~Firstname Length: ");
+		System.out.println("" + firstNames[0]);
+		
+		
 		outputBuffer.append(String.format("# of people imported: %d\n", firstNames.length));
 		
 		outputBuffer.append(String.format("\n%-30s %s  %-12s %12s\n", "Person Name", "Age", "Emp. Type", "Pay"));
@@ -157,10 +161,17 @@ public class RecordProcessor {
 		
 		//close the file
 		employeeRecords.close();
-		
+
 		return outputBuffer.toString();
 	}
 	
+	//-----------------------------------FUNCTIONS-----------------------------------------------------------------------------------
+	
+	//------------FIND SAME NAME-----------------
+	
+	
+	
+	//----------UTILS--------------------------
 	private static Scanner openFile(String filePath) {
 		try {
 			return new Scanner(new File(filePath));
@@ -180,7 +191,9 @@ public class RecordProcessor {
 		return nonEmptyLineCount;
 	}
 	
-	private static void alphabatizeEmployeeDataByLastName(Scanner employeeRecords, int nonEmptyLineCount ) throws Exception{
+	
+	//-------------------SORTING------------------------
+	private static int alphabatizeEmployeeDataByLastName(Scanner employeeRecords, int nonEmptyLineCount) throws Exception{
 		while(employeeRecords.hasNextLine()) {
 			String nextLine = employeeRecords.nextLine();
 			if(nextLine.length() > 0) {
@@ -188,20 +201,21 @@ public class RecordProcessor {
 				nonEmptyLineCount++;
 			}
 		}
+		return nonEmptyLineCount;
 	}
 	
-	private static void setEmployeeRecords(String line,int nonEmptyLineCount){
+	private static void setEmployeeRecords(String line,int nonEmptyLineCount) throws Exception{
 		String [] words = line.split(",");
 
 		int employeeIndex = 0;
 		employeeIndex = getEmployeeIndex(employeeIndex, nonEmptyLineCount,words);
-		
 		firstNames[employeeIndex] = words[0];
 		lastNames[employeeIndex] = words[1];
 		employeeTypes[employeeIndex] = words[3];
-
+		
 		ages[employeeIndex] = Integer.parseInt(words[2]);
 		payments[employeeIndex] = Double.parseDouble(words[4]);
+		
 	}
 	
 	private static int getEmployeeIndex(int employeeIndex, int nonEmptyLineCount, String words[]){
@@ -226,6 +240,4 @@ public class RecordProcessor {
 			payments[i] = payments[i - 1];
 		}
 	}
-	
-	
 }
