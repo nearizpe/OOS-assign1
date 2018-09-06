@@ -17,26 +17,9 @@ public class RecordProcessor {
 		//make different buffers for different contexts e.g. header,body
 		StringBuffer outputBuffer = new StringBuffer();
 		
-		Scanner scanner = null;
-		//make open function
-		try {
-			scanner = new Scanner(new File(filePath));
-		} catch (FileNotFoundException e) {
-			System.err.println(e.getMessage());
-			return null;
-		}
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Scanner employeeRecords = openFile(filePath);
 		
-		//make not empty line counter function
-		//params:scanner
-		//returns:count
-		int nonEmptyLineCount = getLineCount(scanner);
-		//while(scanner.hasNextLine()) {
-		//	String nextLine = scanner.nextLine();
-		//	if(nextLine.length() > 0)
-		//		nonEmptyLineCount++;
-		//}
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		int nonEmptyLineCount = getLineCount(employeeRecords);
 		
 		firstNames = new String[nonEmptyLineCount];
 		lastNames = new String[nonEmptyLineCount];
@@ -44,62 +27,24 @@ public class RecordProcessor {
 		employeeTypes = new String[nonEmptyLineCount];
 		payments = new double[nonEmptyLineCount];
 
-		scanner.close();
-		//make open function
-		try {
-			scanner = new Scanner(new File(filePath));
-		} catch (FileNotFoundException e) {
-			System.err.println(e.getMessage());
-			return null;
-		}
-		//~~~~~~~~~~~~~~~~~~~~~~~
+		employeeRecords.close();
+		
+		employeeRecords = openFile(filePath);
 		
 		nonEmptyLineCount = 0;
-		while(scanner.hasNextLine()) {
-			String nextLine = scanner.nextLine();
-			if(nextLine.length() > 0) {
-				
-				String [] words = nextLine.split(",");
-
-				int sortingIndex = 0;
-				//make func
-				for(;sortingIndex < lastNames.length; sortingIndex++) {
-					if(lastNames[sortingIndex] == null)
-						break;
-					
-					if(lastNames[sortingIndex].compareTo(words[1]) > 0) {
-						//make function
-						for(int i = nonEmptyLineCount; i > sortingIndex; i--) {
-							firstNames[i] = firstNames[i - 1];
-							lastNames[i] = lastNames[i - 1];
-							ages[i] = ages[i - 1];
-							employeeTypes[i] = employeeTypes[i - 1];
-							payments[i] = payments[i - 1];
-						}
-						break;
-					}
-				}
-				
-				firstNames[sortingIndex] = words[0];
-				lastNames[sortingIndex] = words[1];
-				employeeTypes[sortingIndex] = words[3];
-
-				try {
-					ages[sortingIndex] = Integer.parseInt(words[2]);
-					payments[sortingIndex] = Double.parseDouble(words[4]);
-				} catch(Exception e) {
-					System.err.println(e.getMessage());
-					scanner.close();
-					return null;
-				}
-				
-				nonEmptyLineCount++;
-			}//end of if
-		}//end of while
+		
+		//function 
+		try{
+			alphabatizeEmployeeDataByLastName(employeeRecords,nonEmptyLineCount);
+		} catch(Exception e) {
+			System.err.println(e.getMessage());
+			employeeRecords.close();
+			return null;
+		}
 		
 		if(nonEmptyLineCount == 0) {
 			System.err.println("No records found in data file");
-			scanner.close();
+			employeeRecords.close();
 			return null;
 		}
 		
@@ -211,9 +156,18 @@ public class RecordProcessor {
 		
 		
 		//close the file
-		scanner.close();
+		employeeRecords.close();
 		
 		return outputBuffer.toString();
+	}
+	
+	private static Scanner openFile(String filePath) {
+		try {
+			return new Scanner(new File(filePath));
+		} catch (FileNotFoundException e) {
+			System.err.println(e.getMessage());
+			return null;
+		}
 	}
 
 	private static int getLineCount(Scanner scanner) {
@@ -225,5 +179,53 @@ public class RecordProcessor {
 		}
 		return nonEmptyLineCount;
 	}
+	
+	private static void alphabatizeEmployeeDataByLastName(Scanner employeeRecords, int nonEmptyLineCount ) throws Exception{
+		while(employeeRecords.hasNextLine()) {
+			String nextLine = employeeRecords.nextLine();
+			if(nextLine.length() > 0) {
+				setEmployeeRecords(nextLine,nonEmptyLineCount);
+				nonEmptyLineCount++;
+			}
+		}
+	}
+	
+	private static void setEmployeeRecords(String line,int nonEmptyLineCount){
+		String [] words = line.split(",");
+
+		int employeeIndex = 0;
+		employeeIndex = getEmployeeIndex(employeeIndex, nonEmptyLineCount,words);
+		
+		firstNames[employeeIndex] = words[0];
+		lastNames[employeeIndex] = words[1];
+		employeeTypes[employeeIndex] = words[3];
+
+		ages[employeeIndex] = Integer.parseInt(words[2]);
+		payments[employeeIndex] = Double.parseDouble(words[4]);
+	}
+	
+	private static int getEmployeeIndex(int employeeIndex, int nonEmptyLineCount, String words[]){
+		for(;employeeIndex < lastNames.length; employeeIndex++) {
+			if(lastNames[employeeIndex] == null)
+				break;
+			
+			if(lastNames[employeeIndex].compareTo(words[1]) > 0) {
+				setRecordsToPreviousRecords(nonEmptyLineCount,employeeIndex);
+				break;
+			}
+		}
+		return employeeIndex;
+	}
+	
+	private static void setRecordsToPreviousRecords(int nonEmptyLineCount, int employeeIndex){
+		for(int i = nonEmptyLineCount; i > employeeIndex; i--) {
+			firstNames[i] = firstNames[i - 1];
+			lastNames[i] = lastNames[i - 1];
+			ages[i] = ages[i - 1];
+			employeeTypes[i] = employeeTypes[i - 1];
+			payments[i] = payments[i - 1];
+		}
+	}
+	
 	
 }
